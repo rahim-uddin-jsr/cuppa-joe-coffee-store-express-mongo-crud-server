@@ -38,6 +38,36 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    app.get("/coffees/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await coffeeCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/coffees/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const coffee = req.body;
+      const option = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          name: coffee.name,
+          chef: coffee.chef,
+          supplier: coffee.supplier,
+          taste: coffee.taste,
+          category: coffee.category,
+          details: coffee.details,
+          photo: coffee.photo,
+        },
+      };
+      const result = await coffeeCollection.updateOne(
+        query,
+        updatedDoc,
+        option
+      );
+      res.send(result);
+    });
 
     app.delete("/delete/:id", async (req, res) => {
       const id = req.params.id;
